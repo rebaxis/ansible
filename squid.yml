@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+
+  tasks:
+  - name: install squid
+    yum:
+     name: squid
+     state: latest
+    become: yes
+
+  - name: restart squid service
+    service:
+     name: squid
+     state: restarted
