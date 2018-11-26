@@ -8,7 +8,23 @@
      state: latest
     become: yes
 
+  - set_fact:
+     ip_srv: "{{ ansible_default_ipv4.address }}"
+
+  - name: set ip and port for proxy
+    lineinfile:
+     path: /etc/squid/squid.conf
+     regexp: '^http_port.*'
+     line: 'http_port {{ ip_srv }}:3128'
+
+  - name: allow all
+    lineinfile:
+     path: /etc/squid/squid.conf
+     regexp: '^http_access deny all'
+     line: 'http_access allow all'
+
   - name: restart squid service
     service:
      name: squid
+     enabled: yes
      state: restarted
