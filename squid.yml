@@ -1,12 +1,25 @@
 ---
 - hosts: localhost
+  vars:
+   filePass: /etc/squid/squidusers
+  vars_prompt:
+   - name: "user"
+     prompt: "user for squid"
+     private: no
+   - name: "pass"
+     prompt: "pass for user"
+     private: yes
+     confirm: yes
 
   tasks:
   - name: install squid
     yum:
-     name: squid
+     name: "{{ item }}"
      state: latest
     become: yes
+    with_items:
+     - squid
+     - httpd-tools
 
   - set_fact:
      ip_srv: "{{ ansible_default_ipv4.address }}"
@@ -17,11 +30,18 @@
      regexp: '^http_port.*'
      line: 'http_port {{ ip_srv }}:3128'
 
-  - name: allow all
+  - name: setting of auth
     lineinfile:
      path: /etc/squid/squid.conf
-     regexp: '^http_access deny all'
-     line: 'http_access allow all'
+     insertafter: '^# INSERT YOUR OWN RULE.*'
+     line: "{{ item }}"
+    with_items:
+     - 'http_access allow aut'
+     - 'acl aut proxy_auth REQUIRED'
+     - 'auth_param basic program /usr/lib64/squid/basic_ncsa_auth {{ filePass }}'
+
+  - name: save user:pass to file
+    shell: "echo {{ pass }} | htpasswd -ic {{ filePass }} {{ user }}"
 
   - name: restart squid service
     service:
