@@ -5,6 +5,7 @@
     ansible_ssh_extra_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
     gcp_project: proxy-274119
     gcp_cred_kind: serviceaccount
+    # to take here https://console.cloud.google.com/apis/credentials/serviceaccountkey
     gcp_cred_file: /Users/u16705009/Downloads/proxy-274119-67ad9bb16345.json
     my_user: rebaxis
     my_user_open_key:
