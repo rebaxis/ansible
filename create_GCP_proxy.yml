@@ -8,6 +8,7 @@
     # to take here https://console.cloud.google.com/apis/credentials/serviceaccountkey
     gcp_cred_file: /Users/u16705009/Downloads/proxy-274119-67ad9bb16345.json
     my_user: rebaxis
+    # your local ssh key
     my_user_open_key:
       "{{ my_user }}: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4tTNQz9p5ecYeFGToZ/JPKCD5id1NQhvZJAr1ArORQSQB1Nm2vck4i0jj/80wJ\
       +nbnFwYTFcXbdAmuv7TltVPfJBsqV8GYr+gUkXuVaNf4Ov8hmbC+ubeJvc229XaKKevbk0qeivAL1qg+B3ZLd5b2L8XBJG3c2aeT9MQrFHyAty\
