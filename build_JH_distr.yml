@@ -1,0 +1,77 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+   pkgs:
+   - python36
+   - python36-virtualenv
+   - python36-pip
+   - npm
+   jh_path: /opt/python/virtualenv/jupyter
+   python_so: libpython3.6m.so.1.0
+   python_so_link: libpython3.6m.so
+
+  tasks:
+  - name: install epel
+    yum:
+     name: epel-release
+     state: latest
+
+  - name: install Python and other packages
+    yum:
+     name: "{{ pkgs }}"
+     state: latest
+
+  - name: update pip
+    shell: pip3.6 install --upgrade pip
+
+  - name: configuring pip
+    blockinfile:
+     path: /etc/pip.conf
+     create: yes
+     block: |
+        [global]
+        trusted-host = pypi.python.org
+                       pypi.org
+                       files.pythonhosted.org
+
+  - name: update virtualenv
+    shell: pip3.6 install --upgrade virtualenv
+
+  - name: delete the old venv
+    file:
+     path: "{{ jh_path }}"
+     state: absent
+
+  - name: create venv
+    shell: "python3.6 -m virtualenv --always-copy {{ jh_path }}"
+
+  - name: copy .so files for python
+    copy:
+     src: /usr/lib64/libpython3.6m.so.1.0
+     dest: "{{ jh_path }}/lib64"
+     mode: 0700
+
+  - name: Create a symbolic link
+    file:
+     src: "{{ jh_path }}/lib64/{{ python_so }}"
+     dest: "{{ jh_path }}/lib64/{{ python_so_link }}"
+     state: link
+
+#  - meta: end_play
+
+  - name: install componenets to venv
+    shell: >
+                source {{ jh_path }}/bin/activate &&
+                pip3 -vvv install jupyterhub notebook nodeenv jupyterhub-systemdspawner ipywidgets && nodeenv -p &> /tmp/err
+                #nodeenv -p && deactivate
+    register: res
+    ignore_errors: 1
+   
+  - debug:
+     msg: "{{ res }}"
+#                npm install -g configurable-http-proxy &&
+#                jupyter nbextension install --py widgetsnbextension --sys-prefix &&
+#                jupyter nbextension enable --py widgetsnbextension --sys-prefix &&
+#                deactivate
+
