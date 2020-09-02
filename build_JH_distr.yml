@@ -60,18 +60,20 @@
 
 #  - meta: end_play
 
-  - name: install componenets to venv
+  - name: install components to venv, part 1
     shell: >
                 source {{ jh_path }}/bin/activate &&
-                pip3 -vvv install jupyterhub notebook nodeenv jupyterhub-systemdspawner ipywidgets && nodeenv -p &> /tmp/err
-                #nodeenv -p && deactivate
-    register: res
-    ignore_errors: 1
-   
-  - debug:
-     msg: "{{ res }}"
-#                npm install -g configurable-http-proxy &&
-#                jupyter nbextension install --py widgetsnbextension --sys-prefix &&
-#                jupyter nbextension enable --py widgetsnbextension --sys-prefix &&
-#                deactivate
+                pip3 install jupyterhub jupyterlab notebook nodeenv jupyterhub-systemdspawner ipywidgets &&
+                pip3 install git+https://github.com/jupyterhub/wrapspawner &&
+                deactivate
+#    ignore_errors: 1
+  
+  - name: install components to venv, part 2
+    shell: >
+                source {{ jh_path }}/bin/activate &&
+                nodeenv -p --ignore_ssl_certs && npm config set registry="http://registry.npmjs.org/" &&
+                npm install -g configurable-http-proxy &&
+                jupyter nbextension install --py widgetsnbextension --sys-prefix &&
+                jupyter nbextension enable --py widgetsnbextension --sys-prefix &&
+                deactivate
 

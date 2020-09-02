@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+   pkgs:
+   - npm
+   jh_path: /opt/python/virtualenv/jupyter
+   conda_distr: /tmp/miniconda.sh
+
+  tasks:
+  - name: download miniconda
+    get_url:
+     url: https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+     dest: "{{ conda_distr }}"
+     mode: 0777
+  
+  - name: delete the old venv
+    file:
+     path: "{{ jh_path }}"
+     state: absent
+
+  - name: install miniconda
+    shell: "{{ conda_distr }} -b -p {{ jh_path }}"
+
+  - name: configuring pip
+    blockinfile:
+     path: /etc/pip.conf
+     create: yes
+     block: |
+        [global]
+        trusted-host = pypi.python.org
+                       pypi.org
+                       files.pythonhosted.org
+
+  - name: install components to venv, part 1
+    shell: >
+                source {{ jh_path }}/bin/activate &&
+                pip install jupyterhub jupyterlab notebook nodeenv jupyterhub-systemdspawner ipywidgets &&
+                pip install git+https://github.com/jupyterhub/wrapspawner &&
+                deactivate
+  
+  - name: install components to venv, part 2
+    shell: >
+                source {{ jh_path }}/bin/activate &&
+                nodeenv -p --ignore_ssl_certs && npm config set registry="http://registry.npmjs.org/" &&
+                npm install -g configurable-http-proxy &&
+                jupyter nbextension install --py widgetsnbextension --sys-prefix &&
+                jupyter nbextension enable --py widgetsnbextension --sys-prefix &&
+                deactivate
+
+  - name: clean conda
+    shell: source {{ jh_path }}/bin/activate && conda clean all
+
