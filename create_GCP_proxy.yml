@@ -31,6 +31,7 @@
       - python3-requests.noarch
       - google-authenticator
       - python3-google-auth.noarch
+      - ca-certificates
      state: latest
     ignore_errors: 1
 
