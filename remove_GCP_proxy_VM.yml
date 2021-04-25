@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - name: install requirements
+    yum:
+     name:
+      - python2-requests.noarch
+      - python3-requests.noarch
+      - google-authenticator
+      - python3-google-auth.noarch
+     state: latest
+    ignore_errors: 1
+
+  - name: remove instance
+    import_role:
+      name: GCP
+      tasks_from: remove_instance

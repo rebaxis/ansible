@@ -1,0 +1,39 @@
+---
+- name: remove the instance
+  gcp_compute_instance:
+    name: proxy-squid
+    zone: "{{ instance_zone }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+  register: instance_info
+
+- debug:
+    msg: "{{ instance_info }}"
+
+- name: remove the disk
+  gcp_compute_disk:
+    name: disk-instance-proxy
+    zone: "{{ instance_zone }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+  register: disk
+
+- debug:
+    msg: "{{ disk }}"
+
+- name: remove the address
+  gcp_compute_address:
+    name: address-instance-proxy
+    region: "{{ address_region }}"
+    project: "{{ gcp_project }}"
+    auth_kind: "{{ gcp_cred_kind }}"
+    service_account_file: "{{ gcp_cred_file }}"
+    state: absent
+  register: address
+
+- debug:
+    msg: "{{ address }}"
