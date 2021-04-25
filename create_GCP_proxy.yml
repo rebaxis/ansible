@@ -1,0 +1,37 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+  - name: install requirements
+    yum:
+     name:
+      - python2-requests.noarch
+      - python3-requests.noarch
+      - google-authenticator
+      - python3-google-auth.noarch
+      - ca-certificates
+     state: latest
+    ignore_errors: 1
+
+  - name: create instance
+    import_role:
+      name: GCP
+      tasks_from: create_instance
+
+- hosts: instance
+  vars:
+    - ansible_ssh_extra_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+  vars_prompt:
+    - name: "user"
+      prompt: "user for squid"
+      private: no
+    - name: "pass"
+      prompt: "pass for user"
+      private: yes
+      confirm: yes
+
+  tasks:
+    - name: install proxy
+      import_role:
+        name: squid
