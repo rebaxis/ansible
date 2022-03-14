@@ -12,7 +12,8 @@ my_user_open_key:
   djkvmGHiBUwiCrO38ffJnEawhBa1iuRR2bdrvCWmp3qQPvGpgwuPNQle5812GKG2edh8Ps6EE/sRNjrX4e2l8CEVJUmZX7+IWEXhGM7R7bQpY87tx9Sr4Ksz\
   ImzqLOPM8kB3t+bRX1tLlc8CcxUKfYqLLjVTnglMqajIWgCbf6sI8R8QWxoQpewlp3tPy/gvADMI++PwYDRWWOBHAX/7b/EzEL3iYPuz4DmKHl7R1bd2kLwFC\
   ZsADH3xGSzgQFgP47c634j7hTexG+7cy4CeW7FiCdrWB0YApn+2rBORtB9+3krgg/pOSV3M= rebaxis@gmail.com"
-image: 'projects/centos-cloud/global/images/centos-7-v20190116'
+# to get lit of image 'gcloud compute images list'
+image: 'projects/centos-cloud/global/images/centos-stream-8-v20220303'
 open_ports: ['443','22','3128']
 # the Netherlands
 address_region: europe-west4
