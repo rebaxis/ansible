@@ -1,0 +1,65 @@
+---
+- hosts: localhost
+  vars:
+    - admin: pda
+  gather_facts: no
+
+  tasks:
+  - name: install requirements
+    yum:
+     name:
+      - vim
+      - screen
+      - mdadm
+      - mc
+      - podman  
+     state: latest
+    ignore_errors: 1
+    no_log: false
+
+  - name: set timezone
+    shell: "timedatectl set-timezone Europe/Moscow"
+
+  - name: Create a login user
+    user:
+     name: "{{ admin }}"
+     groups:
+       - wheel
+     state: present
+     shell: /bin/bash
+     system: no
+     createhome: yes
+     home: "/home/{{ admin }}"
+
+  - name: Create .ssh folder
+    file:
+     path: "/home/{{ admin }}/.ssh"
+     state: directory
+     owner: "{{ admin }}"
+     group: "{{ admin }}"
+     mode: 0700
+
+  - name: "create ssh keys for {{ admin }}"
+    openssh_keypair:
+      path: "/home/{{ admin }}/.ssh/id_rsa"
+      owner: "{{ admin }}"
+      group: "{{ admin }}"
+
+  - name: create authorized_keys file
+    copy:
+      src: "/home/{{ admin }}/.ssh/id_rsa.pub"
+      dest: "/home/{{ admin }}/.ssh/authorized_keys" 
+
+  - name: set git config
+    git_config:
+      name: user.name
+      scope: system
+      value: "{{ admin }}"
+
+  - name: set git config
+    git_config:
+      name: user.email
+      scope: system
+      value: rebaxis@gmail.com
+
+
