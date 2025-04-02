@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  vars_prompt:
+    - name: "user"
+      prompt: "user for squid"
+      private: no
+    - name: "pass"
+      prompt: "pass for user"
+      private: yes
+      confirm: yes
+
+  tasks:
+    - name: install proxy
+      import_role:
+        name: squid
